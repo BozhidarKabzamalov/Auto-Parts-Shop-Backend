@@ -1,4 +1,5 @@
 let Category = require('../models/Category')
+let Part = require('../models/Part')
 
 module.exports.getCategories = (req, res, next) => {
     Category.findAll({
@@ -11,15 +12,5 @@ module.exports.getCategories = (req, res, next) => {
     })
     .catch(error => {
         console.log(error)
-    })
-}
-
-module.exports.getCategory = async (req, res, next) => {
-    let categoryId = req.params.categoryId
-
-    let response = await Category.findByPk(categoryId)
-
-    res.status(200).json({
-        category: response
     })
 }
