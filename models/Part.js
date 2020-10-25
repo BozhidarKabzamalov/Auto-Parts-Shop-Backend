@@ -24,7 +24,7 @@ let Part = sequelize.define('part', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    serial_number: {
+    serialNumber: {
         type: Sequelize.STRING,
         allowNull: false
     },

@@ -11,6 +11,14 @@ let Model = sequelize.define('model', {
     name: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    manufacturedFrom: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    manufacturedTo: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
 })
 
