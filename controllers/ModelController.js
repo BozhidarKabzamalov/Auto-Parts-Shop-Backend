@@ -1,9 +1,9 @@
 let Model = require('../models/Model')
 const { Op } = require("sequelize");
 
-module.exports.getModels = async (req, res, next) => {
-    let brandId = req.query.brandId
-    let year = req.query.year
+module.exports.getModelsByBrandAndYear = async (req, res, next) => {
+    let brandId = req.params.brandId
+    let year = req.params.year
 
     let response = await Model.findAll({
         where: {
@@ -12,8 +12,11 @@ module.exports.getModels = async (req, res, next) => {
                 [Op.lte]: year
             },
             manufacturedTo: {
-                [Op.gte]: year
-            }
+                [Op.or]: {
+                    [Op.gte]: year,
+                    [Op.eq]: null
+               }
+           }
         }
     })
 
