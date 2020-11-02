@@ -1,7 +1,7 @@
 let Sequelize = require('sequelize');
 let sequelize = require('../controllers/DatabaseController');
 
-let Subcategory = sequelize.define('Subcategory', {
+let Order = sequelize.define('order', {
     id: {
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -11,9 +11,11 @@ let Subcategory = sequelize.define('Subcategory', {
     name: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    phone: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
-}, {
-    tableName: 'subcategories'
 })
 
-module.exports = Subcategory;
+module.exports = Order;

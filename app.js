@@ -43,6 +43,8 @@ let Part = require('./models/Part');
 let Category = require('./models/Category');
 let Model = require('./models/Model');
 let Brand = require('./models/Brand');
+let Order = require('./models/Order');
+let Order_Part = require('./models/Order_Part')
 
 Category.hasMany(Part)
 Part.belongsTo(Category)
@@ -56,11 +58,14 @@ Part.belongsToMany(Brand, { through: 'Brand_Part' })
 Model.belongsToMany(Part, { through: 'Model_Part' })
 Part.belongsToMany(Model, { through: 'Model_Part' })
 
-/*let sequelize = require('./controllers/DatabaseController');
+Order.belongsToMany(Part, { through: Order_Part })
+Part.belongsToMany(Order, { through: Order_Part })
+
+let sequelize = require('./controllers/DatabaseController');
 sequelize.sync().then(result => {
     console.log('Synced')
 }).catch(error => {
     console.log(error);
-})*/
+})
 
 module.exports = app;
