@@ -3,7 +3,7 @@ let Model = require('../models/Model')
 
 module.exports.getParts = async (req, res, next) => {
     let page = req.query.page
-    let limit = 10
+    let limit = 3
     let offset = ( page - 1 ) * limit
 
     let response = await Part.findAndCountAll({

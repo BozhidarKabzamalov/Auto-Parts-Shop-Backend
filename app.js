@@ -61,11 +61,11 @@ Part.belongsToMany(Model, { through: 'Model_Part' })
 Order.belongsToMany(Part, { through: Order_Part })
 Part.belongsToMany(Order, { through: Order_Part })
 
-let sequelize = require('./controllers/DatabaseController');
+/*let sequelize = require('./controllers/DatabaseController');
 sequelize.sync().then(result => {
     console.log('Synced')
 }).catch(error => {
     console.log(error);
-})
+})*/
 
 module.exports = app;

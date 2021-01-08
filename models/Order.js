@@ -8,14 +8,42 @@ let Order = sequelize.define('order', {
         autoIncrement: true,
         allowNull: false
     },
-    name: {
+    firstName: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    phone: {
-        type: Sequelize.INTEGER,
+    lastName: {
+        type: Sequelize.STRING,
         allowNull: false
-    }
+    },
+    phoneNumber: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    email: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    city: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    zipCode: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    streetAddress: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    extraNotes: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    totalPrice: {
+        type: Sequelize.DECIMAL,
+        allowNull: false
+    },
 })
 
 module.exports = Order;
