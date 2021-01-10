@@ -22,7 +22,21 @@ router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
 
 router.get('/orders', orderController.getOrders);
 
-router.get('/createCategory', categoryController.createCategory)
+router.post('/createPart', partController.createPart);
+
+router.post('/deletePart', partController.deletePart);
+
+router.post('/createCategory', categoryController.createCategory);
+
+router.post('/deleteCategory', categoryController.deleteCategory);
+
+router.post('/createBrand', brandController.createBrand);
+
+router.post('/deleteBrand', brandController.deleteBrand);
+
+router.post('/createModel', modelController.createModel);
+
+router.post('/deleteModel', modelController.deleteModel);
 
 router.post('/createOrder', [
     check('deliveryInformation.firstName').isLength({ min: 2, max: 50 }),

@@ -1,6 +1,44 @@
 let Part = require('../models/Part')
 let Model = require('../models/Model')
 
+module.exports.createPart = async (req, res, next) => {
+    let name = req.body.name
+    let description = req.body.description
+    let price = req.body.price
+    let manufacturer = req.body.manufacturer
+    let serialNumber = req.body.serialNumber
+    let image = req.body.image
+    let categoryId = req.body.categoryId
+
+    let part = await Part.create({
+        name: name,
+        description: description,
+        price: price,
+        manufacturer: manufacturer,
+        serialNumber: serialNumber,
+        image: image,
+        categoryId: categoryId
+    })
+
+    res.status(200).json({
+        part: part
+    })
+}
+
+module.exports.deletePart = async (req, res, next) => {
+    let partId = req.body.partId
+
+    await Part.destroy({
+        where: {
+            id: partId
+        }
+    })
+
+    res.status(200).json({
+        message: "Part successfully deleted"
+    })
+}
+
 module.exports.getParts = async (req, res, next) => {
     let page = req.query.page
     let limit = 3

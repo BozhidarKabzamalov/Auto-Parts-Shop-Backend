@@ -1,32 +1,37 @@
 let Category = require('../models/Category')
-let Part = require('../models/Part')
 
-module.exports.getCategories = (req, res, next) => {
-    Category.findAll({
-        where: {
-            'parent_id': 0
-        }
-    })
-    .then(result => {
-        res.send(result)
-    })
-    .catch(error => {
-        console.log(error)
+module.exports.getCategories = async (req, res, next) => {
+    let categories = await Category.findAll()
+
+    res.status(200).json({
+        categories: categories
     })
 }
 
-module.exports.createCategory = (req, res, next) => {
-    let name = 'Test'
-    let image = 'https://media.discordapp.net/attachments/747469246170398824/771515998405918730/placeholder.png'
+module.exports.createCategory = async (req, res, next) => {
+    let name = req.body.name
+    let image = req.body.image
 
-    let category = Category.create({
+    let category = await Category.create({
         name: name,
         image: image
     })
-    .then(result => {
-        res.send(result)
+
+    res.status(200).json({
+        category: category
     })
-    .catch(error => {
-        console.log(error)
-    })  
+}
+
+module.exports.deleteCategory = async (req, res, next) => {
+    let categoryId = req.body.categoryId
+
+    await Category.destroy({
+        where: {
+            id: categoryId
+        }
+    })
+
+    res.status(200).json({
+        message: "Category successfully deleted"
+    })
 }

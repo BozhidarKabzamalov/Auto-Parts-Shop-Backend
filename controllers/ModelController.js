@@ -5,7 +5,7 @@ module.exports.getModelsByBrandAndYear = async (req, res, next) => {
     let brandId = req.params.brandId
     let year = req.params.year
 
-    let response = await Model.findAll({
+    let models = await Model.findAll({
         where: {
             brandId: brandId,
             manufacturedFrom: {
@@ -21,6 +21,38 @@ module.exports.getModelsByBrandAndYear = async (req, res, next) => {
     })
 
     res.status(200).json({
-        models: response
+        models: models
+    })
+}
+
+module.exports.createModel = async (req, res, next) => {
+    let name = req.body.name
+    let manufacturedFrom = req.body.manufacturedFrom
+    let manufacturedTo = req.body.manufacturedTo
+    let brandId = req.body.brandId
+
+    let model = await Model.create({
+        name: name,
+        manufacturedFrom: manufacturedFrom,
+        manufacturedTo: manufacturedTo,
+        brandId: brandId
+    })
+
+    res.status(200).json({
+        model: model
+    })
+}
+
+module.exports.deleteModel = async (req, res, next) => {
+    let modelId = req.body.modelId
+
+    await Model.destroy({
+        where: {
+            id: modelId
+        }
+    })
+
+    res.status(200).json({
+        message: "Model successfully deleted"
     })
 }

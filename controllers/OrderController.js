@@ -6,11 +6,9 @@ module.exports.getOrders = async (req, res, next) => {
     let orders = await Order.findAll({
         include: Part
     })
-    console.log(orders)
 
     res.status(200).json({
-        orders: orders,
-        message: 'Great Success'
+        orders: orders
     })
 }
 
@@ -61,6 +59,6 @@ module.exports.createOrder = async (req, res, next) => {
     });
 
     res.status(200).json({
-        message: 'Great Success'
+        order: order
     })
 }
