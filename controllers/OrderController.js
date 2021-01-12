@@ -1,10 +1,10 @@
 let Order = require('../models/Order')
-let Part = require('../models/Part')
+let Product = require('../models/Product')
 let { validationResult } = require('express-validator');
 
 module.exports.getOrders = async (req, res, next) => {
     let orders = await Order.findAll({
-        include: Part
+        include: Product
     })
 
     res.status(200).json({
@@ -49,9 +49,9 @@ module.exports.createOrder = async (req, res, next) => {
     })
 
     items.forEach(item => {
-        Part.findByPk(item.id)
+        Product.findByPk(item.id)
         .then(result => {
-            order.addPart(result, { through: { quantity: item.quantity } })
+            order.addProduct(result, { through: { quantity: item.quantity } })
         })
         .catch(error => {
             console.log(error)

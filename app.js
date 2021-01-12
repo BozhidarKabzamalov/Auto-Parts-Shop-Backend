@@ -39,27 +39,27 @@ app.use(function(err, req, res, next) {
 });
 
 let User = require('./models/User');
-let Part = require('./models/Part');
+let Product = require('./models/Product');
 let Category = require('./models/Category');
 let Model = require('./models/Model');
 let Brand = require('./models/Brand');
 let Order = require('./models/Order');
-let Order_Part = require('./models/Order_Part')
+let Order_Product = require('./models/Order_Product')
 
-Category.hasMany(Part)
-Part.belongsTo(Category)
+Category.hasMany(Product)
+Product.belongsTo(Category)
 
 Brand.hasMany(Model)
 Model.belongsTo(Brand)
 
-Brand.belongsToMany(Part, { through: 'Brand_Part' })
-Part.belongsToMany(Brand, { through: 'Brand_Part' })
+Brand.belongsToMany(Product, { through: 'Brand_Product' })
+Product.belongsToMany(Brand, { through: 'Brand_Product' })
 
-Model.belongsToMany(Part, { through: 'Model_Part' })
-Part.belongsToMany(Model, { through: 'Model_Part' })
+Model.belongsToMany(Product, { through: 'Model_Product' })
+Product.belongsToMany(Model, { through: 'Model_Product' })
 
-Order.belongsToMany(Part, { through: Order_Part })
-Part.belongsToMany(Order, { through: Order_Part })
+Order.belongsToMany(Product, { through: Order_Product })
+Product.belongsToMany(Order, { through: Order_Product })
 
 /*let sequelize = require('./controllers/DatabaseController');
 sequelize.sync().then(result => {

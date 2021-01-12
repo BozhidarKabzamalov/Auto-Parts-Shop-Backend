@@ -18,7 +18,7 @@ let Model = sequelize.define('model', {
     },
     manufacturedTo: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
     }
 })
 

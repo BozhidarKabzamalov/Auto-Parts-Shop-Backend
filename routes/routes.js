@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let partController = require('../controllers/PartController');
+let productController = require('../controllers/ProductController');
 let categoryController = require('../controllers/CategoryController');
 let brandController = require('../controllers/BrandController');
 let modelController = require('../controllers/ModelController');
@@ -8,11 +8,11 @@ let userController = require('../controllers/UserController');
 let orderController = require('../controllers/OrderController');
 let { check } = require('express-validator')
 
-router.get('/parts', partController.getParts);
+router.get('/products', productController.getProducts);
 
-router.get('/parts/:categoryId', partController.getPartsByCategory);
+router.get('/products/:categoryId', productController.getProductsByCategory);
 
-router.get('/parts/:model/:categoryId', partController.getPartsByModelCategory);
+router.get('/products/:model/:categoryId', productController.getProductsByModelCategory);
 
 router.get('/categories', categoryController.getCategories);
 
@@ -22,9 +22,9 @@ router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
 
 router.get('/orders', orderController.getOrders);
 
-router.post('/createPart', partController.createPart);
+router.post('/createProduct', productController.createProduct);
 
-router.post('/deletePart', partController.deletePart);
+router.post('/deleteProduct', productController.deleteProduct);
 
 router.post('/createCategory', categoryController.createCategory);
 

@@ -15,11 +15,6 @@ let Category = sequelize.define('category', {
     image: {
         type: Sequelize.STRING(1400),
         allowNull: false
-    },
-    parent_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
     }
 }, {
     tableName: 'categories'

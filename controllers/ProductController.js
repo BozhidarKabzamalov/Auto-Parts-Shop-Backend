@@ -1,7 +1,7 @@
-let Part = require('../models/Part')
+let Product = require('../models/Product')
 let Model = require('../models/Model')
 
-module.exports.createPart = async (req, res, next) => {
+module.exports.createProduct = async (req, res, next) => {
     let name = req.body.name
     let description = req.body.description
     let price = req.body.price
@@ -10,7 +10,7 @@ module.exports.createPart = async (req, res, next) => {
     let image = req.body.image
     let categoryId = req.body.categoryId
 
-    let part = await Part.create({
+    let product = await Product.create({
         name: name,
         description: description,
         price: price,
@@ -21,30 +21,30 @@ module.exports.createPart = async (req, res, next) => {
     })
 
     res.status(200).json({
-        part: part
+        product: product
     })
 }
 
-module.exports.deletePart = async (req, res, next) => {
-    let partId = req.body.partId
+module.exports.deleteProduct = async (req, res, next) => {
+    let productId = req.body.productId
 
-    await Part.destroy({
+    await Product.destroy({
         where: {
-            id: partId
+            id: productId
         }
     })
 
     res.status(200).json({
-        message: "Part successfully deleted"
+        message: "Product successfully deleted"
     })
 }
 
-module.exports.getParts = async (req, res, next) => {
+module.exports.getProducts = async (req, res, next) => {
     let page = req.query.page
     let limit = 3
     let offset = ( page - 1 ) * limit
 
-    let response = await Part.findAndCountAll({
+    let products = await Product.findAndCountAll({
         limit: limit,
         offset: offset,
         order: [
@@ -52,22 +52,22 @@ module.exports.getParts = async (req, res, next) => {
         ]
     })
 
-    let pages = Math.ceil( response.count / limit )
+    let pages = Math.ceil( products.count / limit )
 
     res.status(200).json({
-        totalItems: response.count,
+        totalItems: products.count,
         totalPages: pages,
-        parts: response.rows
+        products: products.rows
     })
 }
 
-module.exports.getPartsByCategory = async (req, res, next) => {
+module.exports.getProductsByCategory = async (req, res, next) => {
     let categoryId = req.params.categoryId
     let page = req.query.page
     let limit = 10
     let offset = ( page - 1 ) * limit
 
-    let response = await Part.findAndCountAll({
+    let products = await Product.findAndCountAll({
         limit: limit,
         offset: offset,
         where: {
@@ -75,23 +75,23 @@ module.exports.getPartsByCategory = async (req, res, next) => {
         }
     })
 
-    let pages = Math.ceil( response.count / limit )
+    let pages = Math.ceil( products.count / limit )
 
     res.status(200).json({
-        totalItems: response.count,
+        totalItems: products.count,
         totalPages: pages,
-        parts: response.rows
+        products: products.rows
     })
 }
 
-module.exports.getPartsByModelCategory = async (req, res, next) => {
+module.exports.getProductsByModelCategory = async (req, res, next) => {
     let model = req.params.model
     let categoryId = req.params.categoryId
     let page = req.query.page
     let limit = 10
     let offset = ( page - 1 ) * limit
 
-    let response = await Part.findAndCountAll({
+    let products = await Product.findAndCountAll({
         limit: limit,
         offset: offset,
         where: {
@@ -105,11 +105,11 @@ module.exports.getPartsByModelCategory = async (req, res, next) => {
         }
     })
 
-    let pages = Math.ceil( response.count / limit )
+    let pages = Math.ceil( products.count / limit )
 
     res.status(200).json({
-        totalItems: response.count,
+        totalItems: products.count,
         totalPages: pages,
-        parts: response.rows
+        products: products.rows
     })
 }

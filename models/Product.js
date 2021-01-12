@@ -1,7 +1,7 @@
 let Sequelize = require('sequelize');
 let sequelize = require('../controllers/DatabaseController');
 
-let Part = sequelize.define('part', {
+let Product = sequelize.define('product', {
     id: {
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -34,4 +34,4 @@ let Part = sequelize.define('part', {
     }
 })
 
-module.exports = Part;
+module.exports = Product;
