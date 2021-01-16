@@ -20,6 +20,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 var cors = require('cors');
 app.use(cors());
 
+var multer = require('multer');
+app.use(multer().single('image'));
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler

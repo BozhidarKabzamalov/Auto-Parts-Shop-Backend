@@ -1,4 +1,6 @@
 let Category = require('../models/Category')
+let Jimp = require('jimp');
+let { v4: uuidv4 } = require('uuid');
 
 module.exports.getCategories = async (req, res, next) => {
     let categories = await Category.findAll()
@@ -10,11 +12,23 @@ module.exports.getCategories = async (req, res, next) => {
 
 module.exports.createCategory = async (req, res, next) => {
     let name = req.body.name
-    let image = req.body.image
+    let file = req.file
+    let imageName = uuidv4() + ".png"
+    let imageUrl = req.protocol + '://' + req.get('host') + '/images/categories/' + imageName
+
+    Jimp.read(file.buffer)
+    .then(image => {
+        return image
+        .resize(Jimp.AUTO, 200)
+        .write('public/images/categories/' + imageName);
+    })
+    .catch(err => {
+        console.error(err);
+    });
 
     let category = await Category.create({
         name: name,
-        image: image
+        image: imageUrl
     })
 
     res.status(200).json({

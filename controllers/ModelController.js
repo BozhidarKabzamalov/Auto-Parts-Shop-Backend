@@ -25,6 +25,22 @@ module.exports.getModelsByBrandAndYear = async (req, res, next) => {
     })
 }
 
+module.exports.getModelsByName = async (req, res, next) => {
+    let name = req.params.name
+
+    let models = await Model.findAll({
+        where: {
+            name: {
+                [Op.substring]: name
+            }
+        }
+    })
+
+    res.status(200).json({
+        models: models
+    })
+}
+
 module.exports.createModel = async (req, res, next) => {
     let name = req.body.name
     let manufacturedFrom = req.body.manufacturedFrom

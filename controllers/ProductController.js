@@ -1,5 +1,7 @@
 let Product = require('../models/Product')
 let Model = require('../models/Model')
+let Jimp = require('jimp');
+let { v4: uuidv4 } = require('uuid');
 
 module.exports.createProduct = async (req, res, next) => {
     let name = req.body.name
@@ -7,8 +9,20 @@ module.exports.createProduct = async (req, res, next) => {
     let price = req.body.price
     let manufacturer = req.body.manufacturer
     let serialNumber = req.body.serialNumber
-    let image = req.body.image
     let categoryId = req.body.categoryId
+    let file = req.file
+    let imageName = uuidv4() + ".png"
+    let imageUrl = req.protocol + '://' + req.get('host') + '/images/products/' + imageName
+
+    Jimp.read(file.buffer)
+    .then(image => {
+        return image
+        .resize(Jimp.AUTO, 200)
+        .write('public/images/products/' + imageName);
+    })
+    .catch(err => {
+        console.error(err);
+    });
 
     let product = await Product.create({
         name: name,
@@ -16,7 +30,7 @@ module.exports.createProduct = async (req, res, next) => {
         price: price,
         manufacturer: manufacturer,
         serialNumber: serialNumber,
-        image: image,
+        image: imageUrl,
         categoryId: categoryId
     })
 
