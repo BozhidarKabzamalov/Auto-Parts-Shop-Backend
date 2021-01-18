@@ -18,9 +18,11 @@ router.get('/categories', categoryController.getCategories);
 
 router.get('/brands', brandController.getBrands);
 
+router.get('/brands/:name', brandController.getBrandsByName);
+
 router.get('/models/:name', modelController.getModelsByName);
 
-//router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
+router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
 
 router.get('/orders', orderController.getOrders);
 

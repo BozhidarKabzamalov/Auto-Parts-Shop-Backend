@@ -1,5 +1,6 @@
 let Product = require('../models/Product')
 let Model = require('../models/Model')
+let Brand = require('../models/Brand')
 let Jimp = require('jimp');
 let { v4: uuidv4 } = require('uuid');
 
@@ -10,9 +11,23 @@ module.exports.createProduct = async (req, res, next) => {
     let manufacturer = req.body.manufacturer
     let serialNumber = req.body.serialNumber
     let categoryId = req.body.categoryId
+    let brandsIds = JSON.parse(req.body.brands)
+    let modelsIds = JSON.parse(req.body.models)
     let file = req.file
     let imageName = uuidv4() + ".png"
     let imageUrl = req.protocol + '://' + req.get('host') + '/images/products/' + imageName
+
+    let models = await Model.findAll({
+        where: {
+            id: modelsIds
+        }
+    });
+
+    let brands = await Brand.findAll({
+        where: {
+            id: brandsIds
+        }
+    });
 
     Jimp.read(file.buffer)
     .then(image => {
@@ -33,6 +48,14 @@ module.exports.createProduct = async (req, res, next) => {
         image: imageUrl,
         categoryId: categoryId
     })
+
+    models.forEach((model, i) => {
+        model.addProduct(product)
+    });
+
+    brands.forEach((brand, i) => {
+        brand.addProduct(product)
+    });
 
     res.status(200).json({
         product: product

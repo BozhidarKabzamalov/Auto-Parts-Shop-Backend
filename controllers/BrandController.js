@@ -1,7 +1,24 @@
 let Brand = require('../models/Brand')
+const { Op } = require("sequelize");
 
 module.exports.getBrands = async (req, res, next) => {
     let brands = await Brand.findAll()
+
+    res.status(200).json({
+        brands: brands
+    })
+}
+
+module.exports.getBrandsByName = async (req, res, next) => {
+    let name = req.params.name
+
+    let brands = await Brand.findAll({
+        where: {
+            name: {
+                [Op.substring]: name
+            }
+        }
+    })
 
     res.status(200).json({
         brands: brands
