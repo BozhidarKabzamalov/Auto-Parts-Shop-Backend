@@ -2,51 +2,104 @@ let Brand = require('../models/Brand')
 const { Op } = require("sequelize");
 
 module.exports.getBrands = async (req, res, next) => {
-    let brands = await Brand.findAll()
+    let brands
 
-    res.status(200).json({
-        brands: brands
-    })
+    try {
+        brands = await Brand.findAll()
+    } catch (e) {
+        console.log(e)
+    }
+
+    if (brands) {
+        res.status(200).json({
+            brands: brands
+        })
+    } else {
+        res.status(500)
+    }
 }
 
 module.exports.getBrandsByName = async (req, res, next) => {
     let name = req.params.name
+    let brands
 
-    let brands = await Brand.findAll({
-        where: {
-            name: {
-                [Op.substring]: name
+    try {
+        brands = await Brand.findAll({
+            where: {
+                name: {
+                    [Op.substring]: name
+                }
             }
-        }
-    })
+        })
+    } catch (e) {
+        console.log(e)
+    }
 
-    res.status(200).json({
-        brands: brands
-    })
+    if (brands) {
+        res.status(200).json({
+            brands: brands
+        })
+    } else {
+        res.status(500)
+    }
 }
 
 module.exports.createBrand = async (req, res, next) => {
-    let name = req.body.name
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    
+    let name = req.params.name
+    let brandExists
+    let brand
 
-    let brand = await Brand.create({
-        name: name
-    })
+    try {
+        brandExists = await Brand.findOne({
+            where: {
+                name: name
+            }
+        })
 
-    res.status(200).json({
-        brand: brand
-    })
+        if (!brandExists) {
+            brand = await Brand.create({
+                name: name
+            })
+        } else {
+            res.status(403)
+        }
+    } catch (e) {
+        console.log(e)
+    }
+
+    if (brand) {
+        res.status(200).json({
+            brand: brand
+        })
+    } else {
+        res.status(500)
+    }
 }
 
 module.exports.deleteBrand = async (req, res, next) => {
     let brandId = req.body.brandId
+    let brand
 
-    await Brand.destroy({
-        where: {
-            id: brandId
-        }
-    })
+    try {
+        brand = await Brand.destroy({
+            where: {
+                id: brandId
+            }
+        })
+    } catch (e) {
+        console.log(e)
+    }
 
-    res.status(200).json({
-        message: "Brand successfully deleted"
-    })
+    if (brand) {
+        res.status(200).json({
+            brand: brand
+        })
+    } else {
+        res.status(500)
+    }
 }

@@ -20,6 +20,8 @@ router.get('/brands', brandController.getBrands);
 
 router.get('/brands/:name', brandController.getBrandsByName);
 
+router.get('/models', modelController.getModels);
+
 router.get('/models/:name', modelController.getModelsByName);
 
 router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
@@ -30,28 +32,34 @@ router.post('/createProduct', productController.createProduct);
 
 router.post('/deleteProduct', productController.deleteProduct);
 
-router.post('/createCategory', categoryController.createCategory);
+router.post('/createCategory', [
+    check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('image').not().isEmpty().isLength({ min: 1, max: 1400 }),
+], categoryController.createCategory);
 
 router.post('/deleteCategory', categoryController.deleteCategory);
 
-router.post('/createBrand', brandController.createBrand);
+router.post('/createBrand', [
+    check('name').not().isEmpty().isLength({ min: 1, max: 255 })
+], brandController.createBrand);
 
 router.post('/deleteBrand', brandController.deleteBrand);
 
-router.post('/createModel', modelController.createModel);
+router.post('/createModel', [
+    check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
+], modelController.createModel);
 
 router.post('/deleteModel', modelController.deleteModel);
 
 router.post('/createOrder', [
-    check('deliveryInformation.firstName').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.lastName').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.phoneNumber').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.email').isEmail(),
-    check('deliveryInformation.city').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.zipCode').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.firstName').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.streetAddress').isLength({ min: 2, max: 50 }),
-    check('deliveryInformation.extraNotes').isLength({ min: 2, max: 50 }),
+    check('deliveryInformation.firstName').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.lastName').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.phoneNumber').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.email').isEmail().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.city').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.zipCode').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.streetAddress').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.extraNotes').isLength({ min: 1, max: 50 }),
 ], orderController.createOrder);
 
 router.post('/login', userController.loginUser);
