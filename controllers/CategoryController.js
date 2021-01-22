@@ -1,6 +1,7 @@
 let Category = require('../models/Category')
 let Jimp = require('jimp');
 let { v4: uuidv4 } = require('uuid');
+let { validationResult } = require('express-validator');
 
 module.exports.getCategories = async (req, res, next) => {
     let categories

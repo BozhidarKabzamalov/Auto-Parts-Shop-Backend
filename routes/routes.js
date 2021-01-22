@@ -6,6 +6,7 @@ let brandController = require('../controllers/BrandController');
 let modelController = require('../controllers/ModelController');
 let userController = require('../controllers/UserController');
 let orderController = require('../controllers/OrderController');
+let authenticated = require('../middleware/authenticated');
 let { check } = require('express-validator')
 
 router.get('/products', productController.getProducts);
@@ -26,30 +27,30 @@ router.get('/models/:name', modelController.getModelsByName);
 
 router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
 
-router.get('/orders', orderController.getOrders);
+router.get('/orders', authenticated, orderController.getOrders);
 
-router.post('/createProduct', productController.createProduct);
+router.post('/createProduct', authenticated, productController.createProduct);
 
-router.post('/deleteProduct', productController.deleteProduct);
+router.post('/deleteProduct', authenticated, productController.deleteProduct);
 
-router.post('/createCategory', [
+router.post('/createCategory', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('image').not().isEmpty().isLength({ min: 1, max: 1400 }),
 ], categoryController.createCategory);
 
-router.post('/deleteCategory', categoryController.deleteCategory);
+router.post('/deleteCategory', authenticated, categoryController.deleteCategory);
 
-router.post('/createBrand', [
+router.post('/createBrand', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 })
 ], brandController.createBrand);
 
-router.post('/deleteBrand', brandController.deleteBrand);
+router.post('/deleteBrand', authenticated, brandController.deleteBrand);
 
-router.post('/createModel', [
+router.post('/createModel', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
 ], modelController.createModel);
 
-router.post('/deleteModel', modelController.deleteModel);
+router.post('/deleteModel', authenticated, modelController.deleteModel);
 
 router.post('/createOrder', [
     check('deliveryInformation.firstName').not().isEmpty().isLength({ min: 1, max: 255 }),

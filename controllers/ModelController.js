@@ -1,5 +1,6 @@
 let Model = require('../models/Model')
 const { Op } = require("sequelize");
+let { validationResult } = require('express-validator');
 
 module.exports.getModels = async (req, res, next) => {
     let models

@@ -1,8 +1,14 @@
 let User = require('../models/User');
 let bcrypt = require('bcryptjs');
 let jwt = require('jsonwebtoken');
+let { validationResult } = require('express-validator');
 
 module.exports.loginUser = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    
     let username = req.body.username
     let password = req.body.password
 

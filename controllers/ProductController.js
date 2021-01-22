@@ -3,6 +3,7 @@ let Model = require('../models/Model')
 let Brand = require('../models/Brand')
 let Jimp = require('jimp');
 let { v4: uuidv4 } = require('uuid');
+let { validationResult } = require('express-validator');
 
 module.exports.createProduct = async (req, res, next) => {
     let imageName = uuidv4() + ".png"

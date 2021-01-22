@@ -1,5 +1,6 @@
 let Brand = require('../models/Brand')
 const { Op } = require("sequelize");
+let { validationResult } = require('express-validator');
 
 module.exports.getBrands = async (req, res, next) => {
     let brands
@@ -49,8 +50,8 @@ module.exports.createBrand = async (req, res, next) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    
-    let name = req.params.name
+
+    let name = req.body.name
     let brandExists
     let brand
 
