@@ -18,41 +18,29 @@ module.exports.createProduct = async (req, res, next) => {
     }
     let brandsIds = JSON.parse(req.body.brands)
     let modelsIds = JSON.parse(req.body.models)
-    let productExists
-    let product
-    let models
-    let brands
 
     try {
-        productExists = await Product.findOne({
+        let productExists = await Product.findOne({
             where: {
                 name: productToCreate.name
             }
         })
 
         if (!productExists) {
-            product = await Product.create(productToCreate)
-        } else {
-            res.status(403)
-        }
+            let product = await Product.create(productToCreate)
 
-        models = await Model.findAll({
-            where: {
-                id: modelsIds
-            }
-        });
+            models = await Model.findAll({
+                where: {
+                    id: modelsIds
+                }
+            });
 
-        brands = await Brand.findAll({
-            where: {
-                id: brandsIds
-            }
-        });
-    } catch (e) {
-        console.log(e)
-    }
+            let brands = await Brand.findAll({
+                where: {
+                    id: brandsIds
+                }
+            });
 
-    if (product) {
-        if (models && brands) {
             models.forEach((model, i) => {
                 model.addProduct(product)
             })
@@ -60,30 +48,33 @@ module.exports.createProduct = async (req, res, next) => {
             brands.forEach((brand, i) => {
                 brand.addProduct(product)
             })
-        } else {
-            res.status(500)
-        }
 
-        let file = req.file
+            let file = req.file
 
-        if (file) {
-            Jimp.read(file.buffer)
-            .then(image => {
-                return image
-                .resize(Jimp.AUTO, 200)
-                .write('public/images/products/' + imageName);
+            if (file) {
+                Jimp.read(file.buffer)
+                .then(image => {
+                    return image
+                    .resize(Jimp.AUTO, 200)
+                    .write('public/images/products/' + imageName);
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+            }
+
+            res.status(200).json({
+                product: product
             })
-            .catch(err => {
-                console.error(err);
-            });
+        } else {
+            res.status(403)
         }
-
-        res.status(200).json({
-            product: product
-        })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
+
+
 
 }
 
@@ -112,7 +103,7 @@ module.exports.deleteProduct = async (req, res, next) => {
 
 module.exports.getProducts = async (req, res, next) => {
     let page = req.query.page
-    let limit = 3
+    let limit = 10
     let offset = ( page - 1 ) * limit
     let products
 

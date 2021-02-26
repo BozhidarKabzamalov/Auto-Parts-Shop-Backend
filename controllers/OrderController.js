@@ -3,21 +3,29 @@ let Product = require('../models/Product')
 let { validationResult } = require('express-validator');
 
 module.exports.getOrders = async (req, res, next) => {
-    let orders
+    let page = req.query.page
+    let limit = 10
+    let offset = ( page - 1 ) * limit
 
     try {
-        orders = await Order.findAll({
-            include: Product
+        let orders = await Order.findAndCountAll({
+            include: Product,
+            limit: limit,
+            offset: offset,
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        })
+
+        let pages = Math.ceil( orders.count / limit )
+
+        res.status(200).json({
+            orders: orders.rows,
+            totalItems: orders.count,
+            totalPages: pages,
         })
     } catch (e) {
         console.log(e)
-    }
-
-    if (orders) {
-        res.status(200).json({
-            orders: orders
-        })
-    } else {
         res.status(500)
     }
 }
@@ -43,28 +51,24 @@ module.exports.createOrder = async (req, res, next) => {
         totalPrice: 0
     }
     let items = req.body.items
-    let order
 
     items.forEach(item => {
         orderToCreate.totalPrice += item.quantity * item.price
     });
 
     try {
-        order = await Order.create(orderToCreate)
+        let order = await Order.create(orderToCreate)
 
         items.forEach(async item => {
             let product = await Product.findByPk(item.id)
             order.addProduct(product, { through: { quantity: item.quantity } })
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (order) {
         res.status(200).json({
             order: order
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }

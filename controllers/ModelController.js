@@ -3,19 +3,36 @@ const { Op } = require("sequelize");
 let { validationResult } = require('express-validator');
 
 module.exports.getModels = async (req, res, next) => {
-    let models
+    let query = {order: [['createdAt', 'DESC']]};
 
     try {
-        models = await Model.findAll()
+        if (req.query.page) {
+            let page = parseInt(req.query.page, 10);
+
+            if (isNaN(page) || page < 1) {
+                throw new Error(`Invalid page query "page=${req.query.page}"`);
+            }
+
+            let limit = 10
+            query.limit = limit
+            query.offset = ( page - 1 ) * limit
+
+            let models = await Model.findAndCountAll(query)
+
+            res.status(200).json({
+                models: models.rows,
+                totalItems: models.count,
+                totalPages: Math.ceil( models.count / limit )
+            })
+        } else {
+            let models = await Model.findAll(query)
+
+            res.status(200).json({
+                models: models
+            })
+        }
     } catch (e) {
         console.log(e)
-    }
-
-    if (models) {
-        res.status(200).json({
-            models: models
-        })
-    } else {
         res.status(500)
     }
 }
@@ -23,10 +40,9 @@ module.exports.getModels = async (req, res, next) => {
 module.exports.getModelsByBrandAndYear = async (req, res, next) => {
     let brandId = req.params.brandId
     let year = req.params.year
-    let models
 
     try {
-        models = await Model.findAll({
+        let models = await Model.findAll({
             where: {
                 brandId: brandId,
                 manufacturedFrom: {
@@ -40,40 +56,33 @@ module.exports.getModelsByBrandAndYear = async (req, res, next) => {
                }
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (models) {
         res.status(200).json({
             models: models
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
 
 module.exports.getModelsByName = async (req, res, next) => {
     let name = req.params.name
-    let models
 
     try {
-        models = await Model.findAll({
+        let models = await Model.findAll({
             where: {
                 name: {
                     [Op.substring]: name
                 }
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (models) {
         res.status(200).json({
             models: models
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
@@ -83,58 +92,49 @@ module.exports.createModel = async (req, res, next) => {
     let manufacturedFrom = req.body.manufacturedFrom
     let manufacturedTo = req.body.manufacturedTo
     let brandId = req.body.brandId
-    let modelExists
-    let model
 
     try {
-        modelExists = await Model.findOne({
+        let modelExists = await Model.findOne({
             where: {
                 name: name
             }
         })
 
         if (!modelExists) {
-            model = await Model.create({
+            let model = await Model.create({
                 name: name,
                 manufacturedFrom: manufacturedFrom,
                 manufacturedTo: manufacturedTo,
                 brandId: brandId
+            })
+
+            res.status(200).json({
+                model: model
             })
         } else {
             res.status(403)
         }
     } catch (e) {
         console.log(e)
-    }
-
-    if (model) {
-        res.status(200).json({
-            model: model
-        })
-    } else {
         res.status(500)
     }
 }
 
 module.exports.deleteModel = async (req, res, next) => {
     let modelId = req.body.modelId
-    let model
 
     try {
-        model = await Model.destroy({
+        let model = await Model.destroy({
             where: {
                 id: modelId
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (model) {
         res.status(200).json({
             model: model
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }

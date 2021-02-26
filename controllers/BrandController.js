@@ -3,44 +3,57 @@ const { Op } = require("sequelize");
 let { validationResult } = require('express-validator');
 
 module.exports.getBrands = async (req, res, next) => {
-    let brands
+    let query = {order: [['createdAt', 'DESC']]};
 
     try {
-        brands = await Brand.findAll()
-    } catch (e) {
-        console.log(e)
-    }
+        if (req.query.page) {
+            let page = parseInt(req.query.page, 10);
 
-    if (brands) {
-        res.status(200).json({
-            brands: brands
-        })
-    } else {
-        res.status(500)
+            if (isNaN(page) || page < 1) {
+                throw new Error(`Invalid page query "page=${req.query.page}"`);
+            }
+
+            let limit = 10;
+            query.limit = limit;
+            query.offset = (page - 1) * limit;
+
+            let brands = await Brand.findAndCountAll(query);
+
+            res.status(200).json({
+                brands: brands.rows,
+                totalItems: brands.count,
+                totalPages: Math.ceil(brands.count / limit),
+            });
+        } else {
+            let brands = await Brand.findAll(query);
+
+            res.status(200).json({
+                brands: brands
+            });
+        }
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
     }
-}
+};
 
 module.exports.getBrandsByName = async (req, res, next) => {
     let name = req.params.name
-    let brands
 
     try {
-        brands = await Brand.findAll({
+        let brands = await Brand.findAll({
             where: {
                 name: {
                     [Op.substring]: name
                 }
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (brands) {
         res.status(200).json({
             brands: brands
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
@@ -48,59 +61,50 @@ module.exports.getBrandsByName = async (req, res, next) => {
 module.exports.createBrand = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ errors: errors.array() });
     }
 
     let name = req.body.name
-    let brandExists
-    let brand
 
     try {
-        brandExists = await Brand.findOne({
+        let brandExists = await Brand.findOne({
             where: {
                 name: name
             }
         })
 
         if (!brandExists) {
-            brand = await Brand.create({
+            let brand = await Brand.create({
                 name: name
+            })
+
+            res.status(200).json({
+                brand: brand
             })
         } else {
             res.status(403)
         }
     } catch (e) {
         console.log(e)
-    }
-
-    if (brand) {
-        res.status(200).json({
-            brand: brand
-        })
-    } else {
         res.status(500)
     }
 }
 
 module.exports.deleteBrand = async (req, res, next) => {
     let brandId = req.body.brandId
-    let brand
 
     try {
-        brand = await Brand.destroy({
+        let brand = await Brand.destroy({
             where: {
                 id: brandId
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (brand) {
         res.status(200).json({
             brand: brand
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
