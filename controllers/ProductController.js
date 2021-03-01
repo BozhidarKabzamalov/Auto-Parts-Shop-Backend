@@ -29,7 +29,7 @@ module.exports.createProduct = async (req, res, next) => {
         if (!productExists) {
             let product = await Product.create(productToCreate)
 
-            models = await Model.findAll({
+            let models = await Model.findAll({
                 where: {
                     id: modelsIds
                 }
@@ -73,53 +73,41 @@ module.exports.createProduct = async (req, res, next) => {
         console.log(e)
         res.status(500)
     }
-
-
-
 }
 
 module.exports.deleteProduct = async (req, res, next) => {
     let productId = req.body.productId
-    let product
 
     try {
-        product = await Product.destroy({
+        let product = await Product.destroy({
             where: {
                 id: productId
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (product) {
         res.status(200).json({
             product: product
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
 
 module.exports.getProducts = async (req, res, next) => {
-    let page = req.query.page
+    let page = parseInt(req.query.page, 10)
     let limit = 10
     let offset = ( page - 1 ) * limit
-    let products
 
     try {
-        products = await Product.findAndCountAll({
+        let products = await Product.findAndCountAll({
             limit: limit,
             offset: offset,
             order: [
                 ['createdAt', 'DESC']
             ]
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (products) {
         let pages = Math.ceil( products.count / limit )
 
         res.status(200).json({
@@ -127,31 +115,27 @@ module.exports.getProducts = async (req, res, next) => {
             totalPages: pages,
             products: products.rows
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
 
 module.exports.getProductsByCategory = async (req, res, next) => {
     let categoryId = req.params.categoryId
-    let page = req.query.page
+    let page = parseInt(req.query.page, 10)
     let limit = 10
     let offset = ( page - 1 ) * limit
-    let products
 
     try {
-        products = await Product.findAndCountAll({
+        let products = await Product.findAndCountAll({
             limit: limit,
             offset: offset,
             where: {
                 categoryId: categoryId
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (products) {
         let pages = Math.ceil( products.count / limit )
 
         res.status(200).json({
@@ -159,7 +143,8 @@ module.exports.getProductsByCategory = async (req, res, next) => {
             totalPages: pages,
             products: products.rows
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
@@ -167,13 +152,12 @@ module.exports.getProductsByCategory = async (req, res, next) => {
 module.exports.getProductsByModelCategory = async (req, res, next) => {
     let model = req.params.model
     let categoryId = req.params.categoryId
-    let page = req.query.page
+    let page = parseInt(req.query.page, 10)
     let limit = 10
     let offset = ( page - 1 ) * limit
-    let products
 
     try {
-        products = await Product.findAndCountAll({
+        let products = await Product.findAndCountAll({
             limit: limit,
             offset: offset,
             where: {
@@ -186,11 +170,7 @@ module.exports.getProductsByModelCategory = async (req, res, next) => {
                 }
             }
         })
-    } catch (e) {
-        console.log(e)
-    }
 
-    if (products) {
         let pages = Math.ceil( products.count / limit )
 
         res.status(200).json({
@@ -198,7 +178,8 @@ module.exports.getProductsByModelCategory = async (req, res, next) => {
             totalPages: pages,
             products: products.rows
         })
-    } else {
+    } catch (e) {
+        console.log(e)
         res.status(500)
     }
 }
