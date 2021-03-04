@@ -29,28 +29,43 @@ router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
 
 router.get('/orders', authenticated, orderController.getOrders);
 
-router.post('/createProduct', authenticated, productController.createProduct);
+router.post('/createProduct', authenticated, [
+    check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('description').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('price').not().isEmpty().isLength({ min: 1, max: 999 }),
+    check('manufacturer').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('serialNumber').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('categoryId').not().isEmpty().isLength({ min: 1 }),
+], productController.createProduct);
 
-router.post('/deleteProduct', authenticated, productController.deleteProduct);
+router.post('/deleteProduct', authenticated, [
+    check('modeId').not().isEmpty().isLength({ min: 1 })
+], productController.deleteProduct);
 
 router.post('/createCategory', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
-    check('image').not().isEmpty().isLength({ min: 1, max: 1400 }),
+    check('image').not().isEmpty(),
 ], categoryController.createCategory);
 
-router.post('/deleteCategory', authenticated, categoryController.deleteCategory);
+router.post('/deleteCategory', authenticated, [
+    check('categoryId').not().isEmpty().isLength({ min: 1 })
+], categoryController.deleteCategory);
 
 router.post('/createBrand', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 })
 ], brandController.createBrand);
 
-router.post('/deleteBrand', authenticated, brandController.deleteBrand);
+router.post('/deleteBrand', authenticated, [
+    check('brandId').not().isEmpty().isLength({ min: 1 })
+], brandController.deleteBrand);
 
 router.post('/createModel', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
 ], modelController.createModel);
 
-router.post('/deleteModel', authenticated, modelController.deleteModel);
+router.post('/deleteModel', authenticated, [
+    check('modelId').not().isEmpty().isLength({ min: 1 })
+], modelController.deleteModel);
 
 router.post('/createOrder', [
     check('deliveryInformation.firstName').not().isEmpty().isLength({ min: 1, max: 255 }),
@@ -60,10 +75,13 @@ router.post('/createOrder', [
     check('deliveryInformation.city').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('deliveryInformation.zipCode').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('deliveryInformation.streetAddress').not().isEmpty().isLength({ min: 1, max: 255 }),
-    check('deliveryInformation.extraNotes').isLength({ min: 1, max: 50 }),
+    check('deliveryInformation.extraNotes').isLength({ min: 1, max: 255 }),
 ], orderController.createOrder);
 
-router.post('/login', userController.loginUser);
+router.post('/login', [
+    check('username').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('password').not().isEmpty().isLength({ min: 1, max: 255 }),
+], userController.loginUser);
 
 
 module.exports = router;

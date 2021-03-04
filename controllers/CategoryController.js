@@ -2,6 +2,7 @@ let Category = require('../models/Category')
 let Jimp = require('jimp');
 let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
+let fs = require('fs').promises;
 
 module.exports.getCategories = async (req, res, next) => {
     let query = { order: [['createdAt', 'DESC']] }
@@ -88,6 +89,12 @@ module.exports.deleteCategory = async (req, res, next) => {
                 id: categoryId
             }
         })
+
+        try {
+            await fs.unlink('public/images/categories/28df6bfb-ad82-4fb5-92c1-45db27567982.png')
+        } catch (e) {
+            console.log(e)
+        }
 
         res.status(200).json({
             category: category
