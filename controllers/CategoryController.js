@@ -1,5 +1,5 @@
-let Category = require('../models/Category')
-let Jimp = require('jimp');
+let Category = require('../models/Category');
+let sharp = require('sharp');
 let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
@@ -58,15 +58,13 @@ module.exports.createCategory = async (req, res, next) => {
                 image: imageUrl
             })
 
-            Jimp.read(file.buffer)
-            .then(image => {
-                return image
-                .resize(Jimp.AUTO, 200)
-                .write('public/images/categories/' + imageName);
-            })
-            .catch(err => {
-                console.error(err);
-            })
+            try {
+                await sharp(file.buffer)
+                .resize({ height: 200 })
+                .toFile('public/images/categories/' + imageName);
+            } catch (e) {
+                console.log(e)
+            }
 
             res.status(200).json({
                 category: category

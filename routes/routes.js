@@ -32,9 +32,11 @@ router.get('/orders', authenticated, orderController.getOrders);
 router.post('/createProduct', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('description').not().isEmpty().isLength({ min: 1, max: 255 }),
-    check('price').not().isEmpty().isLength({ min: 1, max: 999 }),
+    check('price').not().isEmpty().isLength({ min: 1, max: 9999 }),
+    check('discount').not().isEmpty().isLength({ min: 1, max: 100 }),
     check('manufacturer').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('serialNumber').not().isEmpty().isLength({ min: 1, max: 255 }),
+    check('file').not().isEmpty(),
     check('categoryId').not().isEmpty().isLength({ min: 1 }),
 ], productController.createProduct);
 

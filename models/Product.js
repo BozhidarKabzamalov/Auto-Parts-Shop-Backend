@@ -20,6 +20,10 @@ let Product = sequelize.define('product', {
         type: Sequelize.DECIMAL,
         allowNull: false
     },
+    discount: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     manufacturer: {
         type: Sequelize.STRING,
         allowNull: false

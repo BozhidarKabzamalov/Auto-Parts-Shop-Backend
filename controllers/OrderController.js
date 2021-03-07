@@ -53,7 +53,12 @@ module.exports.createOrder = async (req, res, next) => {
     let items = req.body.items
 
     items.forEach(item => {
-        orderToCreate.totalPrice += item.quantity * item.price
+        if (item.discount === 0) {
+            orderToCreate.totalPrice += item.quantity * item.price
+        } else {
+            let discountPrice = item.price - ( item.price * item.discount / 100 )
+            orderToCreate.totalPrice += item.quantity * discountPrice
+        }
     });
 
     try {

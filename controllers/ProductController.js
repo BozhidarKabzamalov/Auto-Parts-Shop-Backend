@@ -1,7 +1,7 @@
-let Product = require('../models/Product')
-let Model = require('../models/Model')
-let Brand = require('../models/Brand')
-let Jimp = require('jimp');
+let Product = require('../models/Product');
+let Model = require('../models/Model');
+let Brand = require('../models/Brand');
+let sharp = require('sharp');
 let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
@@ -12,6 +12,7 @@ module.exports.createProduct = async (req, res, next) => {
         name: req.body.name,
         description: req.body.description,
         price: parseInt(req.body.price),
+        discount: parseInt(req.body.discount),
         manufacturer: req.body.manufacturer,
         serialNumber: req.body.serialNumber,
         image: req.protocol + '://' + req.get('host') + '/images/products/' + imageName,
@@ -52,16 +53,12 @@ module.exports.createProduct = async (req, res, next) => {
 
             let file = req.file
 
-            if (file) {
-                Jimp.read(file.buffer)
-                .then(image => {
-                    return image
-                    .resize(Jimp.AUTO, 200)
-                    .write('public/images/products/' + imageName);
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+            try {
+                await sharp(file.buffer)
+                .resize({ height: 200 })
+                .toFile('public/images/products/' + imageName);
+            } catch (e) {
+                console.log(e)
             }
 
             res.status(200).json({
