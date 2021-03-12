@@ -11,6 +11,8 @@ let { check } = require('express-validator')
 
 router.get('/products', productController.getProducts);
 
+router.get('/product/:id', productController.getProduct);
+
 router.get('/products/:categoryId', productController.getProductsByCategory);
 
 router.get('/products/:model/:categoryId', productController.getProductsByModelCategory);

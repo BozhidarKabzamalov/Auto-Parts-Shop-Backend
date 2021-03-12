@@ -98,6 +98,20 @@ module.exports.deleteProduct = async (req, res, next) => {
     }
 }
 
+module.exports.getProduct = async (req, res, next) => {
+    let productId = req.params.id
+
+    try {
+        let product = await Product.findByPk(productId)
+
+        res.status(200).json({
+            product: product
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 module.exports.getProducts = async (req, res, next) => {
     let page = parseInt(req.query.page, 10)
     let limit = 10
