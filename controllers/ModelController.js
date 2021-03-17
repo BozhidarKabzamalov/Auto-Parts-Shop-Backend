@@ -138,3 +138,19 @@ module.exports.deleteModel = async (req, res, next) => {
         res.status(500)
     }
 }
+
+module.exports.updateModel = async (req, res, next) => {
+    let modelId = req.body.modelId
+
+    try {
+        let model = await Model.findByPk(modelId)
+
+        model.save()
+
+        res.status(200).json({
+            server: server
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}

@@ -82,14 +82,12 @@ module.exports.deleteCategory = async (req, res, next) => {
     let categoryId = req.body.categoryId
 
     try {
-        let category = await Category.destroy({
-            where: {
-                id: categoryId
-            }
-        })
+        let category = await Category.findByPk(categoryId)
 
         try {
-            await fs.unlink('public/images/categories/28df6bfb-ad82-4fb5-92c1-45db27567982.png')
+            await category.destroy()
+            let folderAndFile = category.image.replace(req.protocol + '://' + req.get('host') + '/images/categories/', '')
+            await fs.unlink('public/images/categories/' + folderAndFile)
         } catch (e) {
             console.log(e)
         }
@@ -100,5 +98,21 @@ module.exports.deleteCategory = async (req, res, next) => {
     } catch (e) {
         console.log(e)
         res.status(500)
+    }
+}
+
+module.exports.updateCategory = async (req, res, next) => {
+    let brand = this.body.brand
+
+    try {
+        let brandToEdit = await Model.findByPk(brand.id)
+        brandToEdit = brand
+        brandToEdit.save()
+
+        res.status(200).json({
+            brand: brandToEdit
+        })
+    } catch (e) {
+        console.log(e)
     }
 }

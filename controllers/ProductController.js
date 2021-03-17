@@ -77,14 +77,12 @@ module.exports.deleteProduct = async (req, res, next) => {
     let productId = req.body.productId
 
     try {
-        let product = await Product.destroy({
-            where: {
-                id: productId
-            }
-        })
+        let product = await Product.findByPk(productId)
 
         try {
-            await fs.unlink('public/images/products/28df6bfb-ad82-4fb5-92c1-45db27567982.png')
+            await product.destroy()
+            let folderAndFile = product.image.replace(req.protocol + '://' + req.get('host') + '/images/products/', '')
+            await fs.unlink('public/images/products/' + folderAndFile)
         } catch (e) {
             console.log(e)
         }
@@ -199,5 +197,21 @@ module.exports.getProductsByModelCategory = async (req, res, next) => {
     } catch (e) {
         console.log(e)
         res.status(500)
+    }
+}
+
+module.exports.updateProduct = async (req, res, next) => {
+    let brand = this.body.brand
+
+    try {
+        let brandToEdit = await Model.findByPk(brand.id)
+        brandToEdit = brand
+        brandToEdit.save()
+
+        res.status(200).json({
+            brand: brandToEdit
+        })
+    } catch (e) {
+        console.log(e)
     }
 }
