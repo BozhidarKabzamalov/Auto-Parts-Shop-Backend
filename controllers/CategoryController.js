@@ -102,15 +102,29 @@ module.exports.deleteCategory = async (req, res, next) => {
 }
 
 module.exports.updateCategory = async (req, res, next) => {
-    let brand = this.body.brand
+    let imageName = uuidv4() + ".png"
+    let imageUrl = req.protocol + '://' + req.get('host') + '/images/categories/' + imageName
 
     try {
-        let brandToEdit = await Model.findByPk(brand.id)
-        brandToEdit = brand
-        brandToEdit.save()
+        let category = await Category.findByPk(req.body.id)
+        let oldImage = category.image
+        category.name = req.body.name
+        category.image = imageUrl
+        category.save()
+
+        try {
+            await sharp(req.file.buffer)
+            .resize({ height: 200 })
+            .toFile('public/images/categories/' + imageName);
+
+            let folderAndFile = oldImage.replace(req.protocol + '://' + req.get('host') + '/images/categories/', '')
+            await fs.unlink('public/images/categories/' + folderAndFile)
+        } catch (e) {
+            console.log(e)
+        }
 
         res.status(200).json({
-            brand: brandToEdit
+            category: category
         })
     } catch (e) {
         console.log(e)

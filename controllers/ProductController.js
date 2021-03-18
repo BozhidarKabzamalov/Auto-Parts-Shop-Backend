@@ -201,15 +201,12 @@ module.exports.getProductsByModelCategory = async (req, res, next) => {
 }
 
 module.exports.updateProduct = async (req, res, next) => {
-    let brand = this.body.brand
-
     try {
-        let brandToEdit = await Model.findByPk(brand.id)
-        brandToEdit = brand
-        brandToEdit.save()
+        let product = await Product.findByPk(req.body.id)
+        product.save()
 
         res.status(200).json({
-            brand: brandToEdit
+            product: product
         })
     } catch (e) {
         console.log(e)

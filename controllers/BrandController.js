@@ -110,15 +110,13 @@ module.exports.deleteBrand = async (req, res, next) => {
 }
 
 module.exports.updateBrand = async (req, res, next) => {
-    let brand = this.body.brand
-
     try {
-        let brandToEdit = await Model.findByPk(brand.id)
-        brandToEdit = brand
-        brandToEdit.save()
+        let brand = await Brand.findByPk(req.body.id)
+        brand.name = req.body.name
+        brand.save()
 
         res.status(200).json({
-            brand: brandToEdit
+            brand: brand
         })
     } catch (e) {
         console.log(e)

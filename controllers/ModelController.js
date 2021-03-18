@@ -140,15 +140,16 @@ module.exports.deleteModel = async (req, res, next) => {
 }
 
 module.exports.updateModel = async (req, res, next) => {
-    let modelId = req.body.modelId
-
+    console.log(req.body)
     try {
-        let model = await Model.findByPk(modelId)
-
+        let model = await Model.findByPk(req.body.id)
+        model.name = req.body.name
+        model.manufacturedFrom = req.body.manufacturedFrom
+        model.manufacturedTo = req.body.manufacturedTo
         model.save()
 
         res.status(200).json({
-            server: server
+            model: model
         })
     } catch (e) {
         console.log(e)
