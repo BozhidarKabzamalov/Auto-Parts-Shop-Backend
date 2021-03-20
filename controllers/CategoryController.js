@@ -102,26 +102,30 @@ module.exports.deleteCategory = async (req, res, next) => {
 }
 
 module.exports.updateCategory = async (req, res, next) => {
-    let imageName = uuidv4() + ".png"
-    let imageUrl = req.protocol + '://' + req.get('host') + '/images/categories/' + imageName
-
     try {
         let category = await Category.findByPk(req.body.id)
-        let oldImage = category.image
+
         category.name = req.body.name
-        category.image = imageUrl
-        category.save()
 
-        try {
-            await sharp(req.file.buffer)
-            .resize({ height: 200 })
-            .toFile('public/images/categories/' + imageName);
+        if (category.image != req.body.image) {
+            let oldImage = category.image
+            let imageName = uuidv4() + ".png"
+            let imageUrl = req.protocol + '://' + req.get('host') + '/images/categories/' + imageName
+            category.image = imageUrl
 
-            let folderAndFile = oldImage.replace(req.protocol + '://' + req.get('host') + '/images/categories/', '')
-            await fs.unlink('public/images/categories/' + folderAndFile)
-        } catch (e) {
-            console.log(e)
+            try {
+                await sharp(req.file.buffer)
+                .resize({ height: 200 })
+                .toFile('public/images/categories/' + imageName);
+
+                let folderAndFile = oldImage.replace(req.protocol + '://' + req.get('host') + '/images/categories/', '')
+                await fs.unlink('public/images/categories/' + folderAndFile)
+            } catch (e) {
+                console.log(e)
+            }
         }
+
+        category.save()
 
         res.status(200).json({
             category: category

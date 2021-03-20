@@ -121,6 +121,14 @@ module.exports.getProducts = async (req, res, next) => {
             offset: offset,
             order: [
                 ['createdAt', 'DESC']
+            ],
+            include: [
+                {
+                    model: Model
+                },
+                {
+                    model: Brand
+                }
             ]
         })
 
@@ -203,6 +211,55 @@ module.exports.getProductsByModelCategory = async (req, res, next) => {
 module.exports.updateProduct = async (req, res, next) => {
     try {
         let product = await Product.findByPk(req.body.id)
+        let brandsIds = JSON.parse(req.body.brands)
+        let modelsIds = JSON.parse(req.body.models)
+
+        product.name = req.body.name
+        product.description = req.body.description
+        product.price = req.body.price
+        product.discount = req.body.discount
+        product.manufacturer = req.body.manufacturer
+        product.serialNumber = req.body.serialNumber
+        product.categoryId = req.body.categoryId
+
+        if (product.image != req.body.image) {
+            let oldImage = product.image
+            let imageName = uuidv4() + ".png"
+            let imageUrl = req.protocol + '://' + req.get('host') + '/images/products/' + imageName
+            product.image = imageUrl
+
+            try {
+                await sharp(req.file.buffer)
+                .resize({ height: 200 })
+                .toFile('public/images/products/' + imageName);
+
+                let folderAndFile = oldImage.replace(req.protocol + '://' + req.get('host') + '/images/products/', '')
+                await fs.unlink('public/images/products/' + folderAndFile)
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        let models = await Model.findAll({
+            where: {
+                id: modelsIds
+            }
+        });
+
+        let brands = await Brand.findAll({
+            where: {
+                id: brandsIds
+            }
+        });
+
+        models.forEach((model, i) => {
+            model.addProduct(product)
+        })
+
+        brands.forEach((brand, i) => {
+            brand.addProduct(product)
+        })
+
         product.save()
 
         res.status(200).json({
