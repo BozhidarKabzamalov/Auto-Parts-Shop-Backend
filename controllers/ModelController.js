@@ -2,6 +2,21 @@ let Model = require('../models/Model')
 const { Op } = require("sequelize");
 let { validationResult } = require('express-validator');
 
+module.exports.getModel = async (req, res, next) => {
+    let modelId = req.params.id
+
+    try {
+        let model = await Model.findByPk(modelId)
+
+        res.status(200).json({
+            model: model
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(500)
+    }
+}
+
 module.exports.getModels = async (req, res, next) => {
     let query = {order: [['createdAt', 'DESC']]};
 

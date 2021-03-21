@@ -19,11 +19,17 @@ router.get('/products/:model/:categoryId', productController.getProductsByModelC
 
 router.get('/categories', categoryController.getCategories);
 
+router.get('/category/:id', categoryController.getCategory);
+
 router.get('/brands', brandController.getBrands);
+
+router.get('/brand/:id', brandController.getBrand);
 
 router.get('/brands/:name', brandController.getBrandsByName);
 
 router.get('/models', modelController.getModels);
+
+router.get('/model/:id', modelController.getModel);
 
 router.get('/models/:name', modelController.getModelsByName);
 

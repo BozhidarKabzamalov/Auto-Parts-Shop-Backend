@@ -6,6 +6,30 @@ let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
 
+module.exports.getProduct = async (req, res, next) => {
+    let productId = req.params.id
+
+    try {
+        let product = await Product.findByPk(productId,{
+            include: [
+                {
+                    model: Model
+                },
+                {
+                    model: Brand
+                }
+            ]
+        })
+
+        res.status(200).json({
+            product: product
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(500)
+    }
+}
+
 module.exports.createProduct = async (req, res, next) => {
     let imageName = uuidv4() + ".png"
     let productToCreate = {
@@ -93,20 +117,6 @@ module.exports.deleteProduct = async (req, res, next) => {
     } catch (e) {
         console.log(e)
         res.status(500)
-    }
-}
-
-module.exports.getProduct = async (req, res, next) => {
-    let productId = req.params.id
-
-    try {
-        let product = await Product.findByPk(productId)
-
-        res.status(200).json({
-            product: product
-        })
-    } catch (e) {
-        console.log(e)
     }
 }
 
@@ -211,8 +221,6 @@ module.exports.getProductsByModelCategory = async (req, res, next) => {
 module.exports.updateProduct = async (req, res, next) => {
     try {
         let product = await Product.findByPk(req.body.id)
-        let brandsIds = JSON.parse(req.body.brands)
-        let modelsIds = JSON.parse(req.body.models)
 
         product.name = req.body.name
         product.description = req.body.description
@@ -240,25 +248,11 @@ module.exports.updateProduct = async (req, res, next) => {
             }
         }
 
-        let models = await Model.findAll({
-            where: {
-                id: modelsIds
-            }
-        });
+        let brandsIds = JSON.parse(req.body.brands)
+        let modelsIds = JSON.parse(req.body.models)
 
-        let brands = await Brand.findAll({
-            where: {
-                id: brandsIds
-            }
-        });
-
-        models.forEach((model, i) => {
-            model.addProduct(product)
-        })
-
-        brands.forEach((brand, i) => {
-            brand.addProduct(product)
-        })
+        product.setModels(modelsIds)
+        product.setBrands(brandsIds)
 
         product.save()
 

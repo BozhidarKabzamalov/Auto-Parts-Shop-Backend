@@ -4,6 +4,21 @@ let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
 
+module.exports.getCategory = async (req, res, next) => {
+    let categoryId = req.params.id
+
+    try {
+        let category = await Category.findByPk(categoryId)
+
+        res.status(200).json({
+            category: category
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(500)
+    }
+}
+
 module.exports.getCategories = async (req, res, next) => {
     let query = { order: [['createdAt', 'DESC']] }
 
