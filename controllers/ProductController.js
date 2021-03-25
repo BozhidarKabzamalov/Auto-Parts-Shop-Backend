@@ -5,6 +5,7 @@ let sharp = require('sharp');
 let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
+let { Op } = require("sequelize");
 
 module.exports.getProduct = async (req, res, next) => {
     let productId = req.params.id
@@ -20,6 +21,20 @@ module.exports.getProduct = async (req, res, next) => {
                 }
             ]
         })
+
+        let category = await product.getCategory()
+        let similarProducts = await category.getProducts({
+            where: {
+                id: {
+                    [Op.not]: product.id
+                }
+            },
+            limit: 4
+        })
+
+        product = product.toJSON()
+        product.similarProducts = similarProducts
+        product.category = category
 
         res.status(200).json({
             product: product
@@ -55,25 +70,8 @@ module.exports.createProduct = async (req, res, next) => {
         if (!productExists) {
             let product = await Product.create(productToCreate)
 
-            let models = await Model.findAll({
-                where: {
-                    id: modelsIds
-                }
-            });
-
-            let brands = await Brand.findAll({
-                where: {
-                    id: brandsIds
-                }
-            });
-
-            models.forEach((model, i) => {
-                model.addProduct(product)
-            })
-
-            brands.forEach((brand, i) => {
-                brand.addProduct(product)
-            })
+            product.setModels(modelsIds)
+            product.setBrands(brandsIds)
 
             let file = req.file
 
