@@ -119,26 +119,34 @@ module.exports.deleteProduct = async (req, res, next) => {
 }
 
 module.exports.getProducts = async (req, res, next) => {
+    console.log(req.query.searchQuery)
+    let searchQuery = req.query.searchQuery
     let page = parseInt(req.query.page, 10)
     let limit = 10
     let offset = ( page - 1 ) * limit
+    let query = {
+        limit: limit,
+        offset: offset,
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    }
 
     try {
-        let products = await Product.findAndCountAll({
-            limit: limit,
-            offset: offset,
-            order: [
-                ['createdAt', 'DESC']
-            ],
-            include: [
-                {
-                    model: Model
-                },
-                {
-                    model: Brand
-                }
-            ]
-        })
+        if (searchQuery) {
+            query.where = {
+                [Op.or]: [
+                    { name: {
+                        [Op.substring]: searchQuery
+                    }},
+                    { serialNumber: {
+                        [Op.substring]: searchQuery
+                    }}
+                ]
+            }
+        }
+
+        let products = await Product.findAndCountAll(query)
 
         let pages = Math.ceil( products.count / limit )
 
