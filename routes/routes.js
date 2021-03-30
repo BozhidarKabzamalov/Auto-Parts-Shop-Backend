@@ -13,10 +13,6 @@ router.get('/products', productController.getProducts);
 
 router.get('/product/:id', productController.getProduct);
 
-router.get('/products/:categoryId', productController.getProductsByCategory);
-
-router.get('/products/:model/:categoryId', productController.getProductsByModelCategory);
-
 router.get('/categories', categoryController.getCategories);
 
 router.get('/category/:id', categoryController.getCategory);
@@ -25,13 +21,9 @@ router.get('/brands', brandController.getBrands);
 
 router.get('/brand/:id', brandController.getBrand);
 
-router.get('/brands/:name', brandController.getBrandsByName);
-
 router.get('/models', modelController.getModels);
 
 router.get('/model/:id', modelController.getModel);
-
-router.get('/models/:name', modelController.getModelsByName);
 
 router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
 

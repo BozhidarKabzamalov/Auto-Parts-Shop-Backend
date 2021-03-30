@@ -18,9 +18,22 @@ module.exports.getModel = async (req, res, next) => {
 }
 
 module.exports.getModels = async (req, res, next) => {
-    let query = {order: [['createdAt', 'DESC']]};
+    let searchQuery = req.query.searchQuery
+    console.log(typeof searchQuery)
+    console.log(searchQuery)
+    let query = {
+        where: [],
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    };
 
     try {
+        if (searchQuery !== undefined) {
+            query.where.push({
+                [Op.substring]: searchQuery
+            })
+        }
         if (req.query.page) {
             let page = parseInt(req.query.page, 10);
 
@@ -69,27 +82,6 @@ module.exports.getModelsByBrandAndYear = async (req, res, next) => {
                         [Op.eq]: null
                    }
                }
-            }
-        })
-
-        res.status(200).json({
-            models: models
-        })
-    } catch (e) {
-        console.log(e)
-        res.status(500)
-    }
-}
-
-module.exports.getModelsByName = async (req, res, next) => {
-    let name = req.params.name
-
-    try {
-        let models = await Model.findAll({
-            where: {
-                name: {
-                    [Op.substring]: name
-                }
             }
         })
 

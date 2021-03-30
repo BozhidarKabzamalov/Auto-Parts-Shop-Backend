@@ -119,22 +119,28 @@ module.exports.deleteProduct = async (req, res, next) => {
 }
 
 module.exports.getProducts = async (req, res, next) => {
-    console.log(req.query.searchQuery)
     let searchQuery = req.query.searchQuery
+    if (searchQuery === 'undefined') searchQuery = undefined;
+    let categoryId = req.query.categoryId
+    if (categoryId === 'undefined') categoryId = undefined;
+    let model = req.query.model
+    if (model === 'undefined') model = undefined;
     let page = parseInt(req.query.page, 10)
     let limit = 10
     let offset = ( page - 1 ) * limit
     let query = {
         limit: limit,
         offset: offset,
+        where: [],
+        include: [],
         order: [
             ['createdAt', 'DESC']
         ]
     }
 
     try {
-        if (searchQuery) {
-            query.where = {
+        if (searchQuery !== undefined) {
+            query.where.push({
                 [Op.or]: [
                     { name: {
                         [Op.substring]: searchQuery
@@ -143,73 +149,24 @@ module.exports.getProducts = async (req, res, next) => {
                         [Op.substring]: searchQuery
                     }}
                 ]
-            }
+            })
         }
-
-        let products = await Product.findAndCountAll(query)
-
-        let pages = Math.ceil( products.count / limit )
-
-        res.status(200).json({
-            totalItems: products.count,
-            totalPages: pages,
-            products: products.rows
-        })
-    } catch (e) {
-        console.log(e)
-        res.status(500)
-    }
-}
-
-module.exports.getProductsByCategory = async (req, res, next) => {
-    let categoryId = req.params.categoryId
-    let page = parseInt(req.query.page, 10)
-    let limit = 10
-    let offset = ( page - 1 ) * limit
-
-    try {
-        let products = await Product.findAndCountAll({
-            limit: limit,
-            offset: offset,
-            where: {
+        if (categoryId !== undefined) {
+            query.where.push({
                 categoryId: categoryId
-            }
-        })
-
-        let pages = Math.ceil( products.count / limit )
-
-        res.status(200).json({
-            totalItems: products.count,
-            totalPages: pages,
-            products: products.rows
-        })
-    } catch (e) {
-        console.log(e)
-        res.status(500)
-    }
-}
-
-module.exports.getProductsByModelCategory = async (req, res, next) => {
-    let model = req.params.model
-    let categoryId = req.params.categoryId
-    let page = parseInt(req.query.page, 10)
-    let limit = 10
-    let offset = ( page - 1 ) * limit
-
-    try {
-        let products = await Product.findAndCountAll({
-            limit: limit,
-            offset: offset,
-            where: {
-                categoryId: categoryId
-            },
-            include: {
+            })
+        }
+        if (model !== undefined) {
+            query.include.push({
                 model: Model,
                 where: {
                     name: model
                 }
-            }
-        })
+            })
+        }
+        console.log(query)
+
+        let products = await Product.findAndCountAll(query)
 
         let pages = Math.ceil( products.count / limit )
 
