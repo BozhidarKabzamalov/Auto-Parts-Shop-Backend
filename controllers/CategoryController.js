@@ -4,7 +4,7 @@ let { v4: uuidv4 } = require('uuid');
 let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
 
-module.exports.getCategory = async (req, res, next) => {
+module.exports.getCategoryById = async (req, res, next) => {
     let categoryId = req.params.id
 
     try {

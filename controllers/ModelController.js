@@ -2,7 +2,7 @@ let Model = require('../models/Model')
 const { Op } = require("sequelize");
 let { validationResult } = require('express-validator');
 
-module.exports.getModel = async (req, res, next) => {
+module.exports.getModelById = async (req, res, next) => {
     let modelId = req.params.id
 
     try {
@@ -19,8 +19,8 @@ module.exports.getModel = async (req, res, next) => {
 
 module.exports.getModels = async (req, res, next) => {
     let searchQuery = req.query.searchQuery
-    console.log(typeof searchQuery)
-    console.log(searchQuery)
+    let brandId = req.query.brandId
+    let year = req.query.year
     let query = {
         where: [],
         order: [
@@ -29,9 +29,25 @@ module.exports.getModels = async (req, res, next) => {
     };
 
     try {
+        if (brandId !== undefined && year !== undefined) {
+            query.where.push({
+                brandId: brandId,
+                manufacturedFrom: {
+                    [Op.lte]: year
+                },
+                manufacturedTo: {
+                    [Op.or]: {
+                        [Op.gte]: year,
+                        [Op.eq]: null
+                   }
+               }
+            })
+        }
         if (searchQuery !== undefined) {
             query.where.push({
-                [Op.substring]: searchQuery
+                name: {
+                    [Op.substring]: searchQuery
+                }
             })
         }
         if (req.query.page) {
@@ -59,35 +75,6 @@ module.exports.getModels = async (req, res, next) => {
                 models: models
             })
         }
-    } catch (e) {
-        console.log(e)
-        res.status(500)
-    }
-}
-
-module.exports.getModelsByBrandAndYear = async (req, res, next) => {
-    let brandId = req.params.brandId
-    let year = req.params.year
-
-    try {
-        let models = await Model.findAll({
-            where: {
-                brandId: brandId,
-                manufacturedFrom: {
-                    [Op.lte]: year
-                },
-                manufacturedTo: {
-                    [Op.or]: {
-                        [Op.gte]: year,
-                        [Op.eq]: null
-                   }
-               }
-            }
-        })
-
-        res.status(200).json({
-            models: models
-        })
     } catch (e) {
         console.log(e)
         res.status(500)

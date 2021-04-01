@@ -2,7 +2,7 @@ let Brand = require('../models/Brand')
 const { Op } = require("sequelize");
 let { validationResult } = require('express-validator');
 
-module.exports.getBrand = async (req, res, next) => {
+module.exports.getBrandById = async (req, res, next) => {
     let brandId = req.params.id
 
     try {
@@ -19,8 +19,6 @@ module.exports.getBrand = async (req, res, next) => {
 
 module.exports.getBrands = async (req, res, next) => {
     let searchQuery = req.query.searchQuery
-    console.log(typeof searchQuery)
-    console.log(searchQuery)
     let query = {
         where: [],
         order: [
@@ -31,7 +29,9 @@ module.exports.getBrands = async (req, res, next) => {
     try {
         if (searchQuery !== undefined) {
             query.where.push({
-                [Op.substring]: searchQuery
+                name: {
+                    [Op.substring]: searchQuery
+                }
             })
         }
         if (req.query.page) {

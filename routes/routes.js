@@ -10,22 +10,16 @@ let authenticated = require('../middleware/authenticated');
 let { check } = require('express-validator')
 
 router.get('/products', productController.getProducts);
-
-router.get('/product/:id', productController.getProduct);
+router.get('/product/:id', productController.getProductById);
 
 router.get('/categories', categoryController.getCategories);
-
-router.get('/category/:id', categoryController.getCategory);
+router.get('/category/:id', categoryController.getCategoryById);
 
 router.get('/brands', brandController.getBrands);
-
-router.get('/brand/:id', brandController.getBrand);
+router.get('/brand/:id', brandController.getBrandById);
 
 router.get('/models', modelController.getModels);
-
-router.get('/model/:id', modelController.getModel);
-
-router.get('/models/:brandId/:year', modelController.getModelsByBrandAndYear);
+router.get('/model/:id', modelController.getModelById);
 
 router.get('/orders', authenticated, orderController.getOrders);
 

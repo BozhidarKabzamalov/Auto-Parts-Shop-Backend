@@ -7,7 +7,7 @@ let { validationResult } = require('express-validator');
 let fs = require('fs').promises;
 let { Op } = require("sequelize");
 
-module.exports.getProduct = async (req, res, next) => {
+module.exports.getProductById = async (req, res, next) => {
     let productId = req.params.id
 
     try {
