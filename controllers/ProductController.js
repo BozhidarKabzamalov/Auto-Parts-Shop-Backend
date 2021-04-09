@@ -164,7 +164,6 @@ module.exports.getProducts = async (req, res, next) => {
                 }
             })
         }
-        console.log(query)
 
         let products = await Product.findAndCountAll(query)
 

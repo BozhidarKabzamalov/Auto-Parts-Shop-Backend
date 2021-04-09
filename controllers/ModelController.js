@@ -134,7 +134,6 @@ module.exports.deleteModel = async (req, res, next) => {
 }
 
 module.exports.updateModel = async (req, res, next) => {
-    console.log(req.body)
     try {
         let model = await Model.findByPk(req.body.id)
         model.name = req.body.name

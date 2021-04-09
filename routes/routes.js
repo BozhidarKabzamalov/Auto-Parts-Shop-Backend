@@ -83,11 +83,9 @@ router.post('/createOrder', [
     check('deliveryInformation.firstName').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('deliveryInformation.lastName').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('deliveryInformation.phoneNumber').not().isEmpty().isLength({ min: 1, max: 255 }),
-    check('deliveryInformation.email').isEmail().isLength({ min: 1, max: 255 }),
     check('deliveryInformation.city').not().isEmpty().isLength({ min: 1, max: 255 }),
     check('deliveryInformation.zipCode').not().isEmpty().isLength({ min: 1, max: 255 }),
-    check('deliveryInformation.streetAddress').not().isEmpty().isLength({ min: 1, max: 255 }),
-    check('deliveryInformation.extraNotes').isLength({ min: 1, max: 255 }),
+    check('deliveryInformation.streetAddress').not().isEmpty().isLength({ min: 1, max: 255 })
 ], orderController.createOrder);
 
 router.post('/login', [
