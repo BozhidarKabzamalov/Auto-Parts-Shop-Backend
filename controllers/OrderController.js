@@ -2,6 +2,23 @@ let Order = require('../models/Order')
 let Product = require('../models/Product')
 let { validationResult } = require('express-validator');
 
+module.exports.getOrderById = async (req, res, next) => {
+    let orderId = req.params.id
+
+    try {
+        let order = await Order.findByPk(orderId, {
+            include: Product
+        })
+
+        res.status(200).json({
+            order: order
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(500)
+    }
+}
+
 module.exports.getOrders = async (req, res, next) => {
     let page = req.query.page
     let limit = 10

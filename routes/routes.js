@@ -22,6 +22,7 @@ router.get('/models', modelController.getModels);
 router.get('/model/:id', modelController.getModelById);
 
 router.get('/orders', authenticated, orderController.getOrders);
+router.get('/order/:id', authenticated, orderController.getOrderById);
 
 router.post('/createProduct', authenticated, [
     check('name').not().isEmpty().isLength({ min: 1, max: 255 }),

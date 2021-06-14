@@ -11,7 +11,7 @@ module.exports.getProductById = async (req, res, next) => {
     let productId = req.params.id
 
     try {
-        let product = await Product.findByPk(productId,{
+        let product = await Product.findByPk(productId, {
             include: [
                 {
                     model: Model
@@ -50,7 +50,7 @@ module.exports.createProduct = async (req, res, next) => {
     let productToCreate = {
         name: req.body.name,
         description: req.body.description,
-        price: parseInt(req.body.price),
+        price: req.body.price,
         discount: parseInt(req.body.discount),
         manufacturer: req.body.manufacturer,
         serialNumber: req.body.serialNumber,

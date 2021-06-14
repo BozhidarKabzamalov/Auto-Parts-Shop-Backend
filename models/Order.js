@@ -41,7 +41,7 @@ let Order = sequelize.define('order', {
         allowNull: true
     },
     totalPrice: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(10, 2),
         allowNull: false
     },
 })

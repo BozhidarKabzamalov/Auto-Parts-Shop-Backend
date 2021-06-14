@@ -20,7 +20,7 @@ module.exports.getCategoryById = async (req, res, next) => {
 }
 
 module.exports.getCategories = async (req, res, next) => {
-    let query = { order: [['createdAt', 'DESC']] }
+    let query = { order: [['name', 'ASC']] }
 
     try {
         if (req.query.page) {
